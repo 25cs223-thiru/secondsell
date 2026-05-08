@@ -1,0 +1,25 @@
+{
+  "overview": "SecondSell is a secondhand marketplace where users can list items for sale with images, price, and condition; browse and filter listings by category; purchase through Stripe-powered checkout; and manage their listings and order history through user profiles.",
+  "features": [
+    "List items with up to 5 photos, price, category, and condition",
+    "Browse and search listings with category filters and sort options",
+    "Item detail pages with full image gallery and buy button",
+    "Stripe-powered checkout with order history and status tracking",
+    "User profiles with active and sold listing management",
+    "Internet Identity login",
+    "Seller trust signals and condition badges on listings",
+    "Recently Viewed section and price range filter on browse page",
+    "Mobile-optimized layout with lazy-loaded images"
+  ],
+  "category": "marketplace",
+  "tags": [
+    "marketplace",
+    "secondhand",
+    "ecommerce",
+    "stripe",
+    "internet-identity",
+    "listings",
+    "shopping"
+  ],
+  "last_updated": "2026-05-01T08:23:53.454Z"
+}

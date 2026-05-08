@@ -1,0 +1,194 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type _ImmutableObjectStorageRefillResult = 
+ record {
+   success: opt bool;
+   topped_up_amount: opt nat;
+ };
+type _ImmutableObjectStorageRefillInformation = record {
+                                                  proposed_top_up_amount:
+                                                   opt nat;};
+type _ImmutableObjectStorageCreateCertificateResult = 
+ record {
+   blob_hash: text;
+   method: text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfile = 
+ record {
+   avatarUrl: opt ExternalBlob;
+   bio: text;
+   createdAt: Timestamp;
+   listingCount: nat;
+   userId: UserId;
+   username: text;
+ };
+type UserId = principal;
+type UpdateListingArgs = 
+ record {
+   brand: opt text;
+   category: text;
+   condition: ListingCondition;
+   description: text;
+   id: ListingId;
+   images: vec ExternalBlob;
+   priceInCents: nat;
+   size: opt text;
+   title: text;
+ };
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type Timestamp = nat;
+type StripeSessionStatus = 
+ variant {
+   completed: record {
+                response: text;
+                userPrincipal: opt text;
+              };
+   failed: record {error: text;};
+ };
+type StripeConfiguration = 
+ record {
+   allowedCountries: vec text;
+   secretKey: text;
+ };
+type ShoppingItem = 
+ record {
+   currency: text;
+   priceInCents: nat;
+   productDescription: text;
+   productName: text;
+   quantity: nat;
+ };
+type OrderStatus = 
+ variant {
+   cancelled;
+   delivered;
+   paid;
+   pending;
+   shipped;
+ };
+type OrderId = nat;
+type Order = 
+ record {
+   buyerId: UserId;
+   createdAt: Timestamp;
+   id: OrderId;
+   listingId: ListingId;
+   priceInCents: nat;
+   sellerId: UserId;
+   status: OrderStatus;
+   stripeSessionId: text;
+   updatedAt: Timestamp;
+ };
+type ListingStatus = 
+ variant {
+   active;
+   deleted;
+   sold;
+ };
+type ListingPage = 
+ record {
+   listings: vec Listing;
+   nextOffset: opt nat;
+   total: nat;
+ };
+type ListingId = nat;
+type ListingCondition = 
+ variant {
+   fair;
+   good;
+   likeNew;
+   new;
+   poor;
+ };
+type Listing = 
+ record {
+   brand: opt text;
+   category: text;
+   condition: ListingCondition;
+   createdAt: Timestamp;
+   description: text;
+   id: ListingId;
+   images: vec ExternalBlob;
+   priceInCents: nat;
+   sellerId: UserId;
+   sellerName: opt text;
+   size: opt text;
+   status: ListingStatus;
+   title: text;
+   updatedAt: Timestamp;
+ };
+type ExternalBlob = blob;
+type CreateListingArgs = 
+ record {
+   brand: opt text;
+   category: text;
+   condition: ListingCondition;
+   description: text;
+   images: vec ExternalBlob;
+   priceInCents: nat;
+   size: opt text;
+   title: text;
+ };
+service : {
+  _immutableObjectStorageBlobsAreLive: (hashes: vec blob) -> (vec bool) query;
+  _immutableObjectStorageBlobsToDelete: () -> (vec blob) query;
+  _immutableObjectStorageConfirmBlobDeletion: (blobs: vec blob) -> ();
+  _immutableObjectStorageCreateCertificate: (blobHash: text) ->
+   (_ImmutableObjectStorageCreateCertificateResult);
+  _immutableObjectStorageRefillCashier: (refillInformation:
+   opt _ImmutableObjectStorageRefillInformation) ->
+   (_ImmutableObjectStorageRefillResult);
+  _immutableObjectStorageUpdateGatewayPrincipals: () -> ();
+  _initializeAccessControl: () -> ();
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  createCheckoutSession: (items: vec ShoppingItem, successUrl: text,
+   cancelUrl: text) -> (text);
+  createListing: (args: CreateListingArgs) -> (Listing);
+  deleteListing: (id: ListingId) -> ();
+  getActiveListings: (offset: nat, limit: nat) -> (ListingPage) query;
+  getCallerUserProfile: () -> (opt UserProfile) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getListing: (id: ListingId) -> (opt Listing) query;
+  getMyListings: () -> (vec Listing) query;
+  getMyOrders: () -> (vec Order) query;
+  getOrder: (id: OrderId) -> (opt Order) query;
+  getStripeSessionStatus: (sessionId: text) -> (StripeSessionStatus);
+  getUserProfile: (userId: UserId) -> (opt UserProfile) query;
+  isCallerAdmin: () -> (bool) query;
+  isStripeConfigured: () -> (bool) query;
+  markListingAsSold: (id: ListingId) -> ();
+  placeOrder: (listingId: ListingId, successUrl: text, cancelUrl: text) ->
+   (text);
+  saveCallerUserProfile: (profile: UserProfile) -> ();
+  searchListings: (keyword: text, category: opt text, offset: nat, limit:
+   nat) -> (ListingPage) query;
+  setStripeConfiguration: (config: StripeConfiguration) -> ();
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  updateListing: (args: UpdateListingArgs) -> ();
+  updateOrderStatusFromSession: (sessionId: text) -> (opt Order);
+}

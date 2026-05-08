@@ -1,0 +1,89 @@
+// Version: 1.0.0
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type ExternalBlob__671167343 = Blob;
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type ListingCondition__596437803 = {#fair; #good; #likeNew; #new; #poor};
+type ListingId__58075594 = Nat;
+type ListingStatus__271393237 = {#active; #deleted; #sold};
+type Listing__798123527 =
+  {
+    brand : ?Text;
+    category : Text;
+    condition : ListingCondition__596437803;
+    createdAt : Timestamp__301639476;
+    description : Text;
+    id : ListingId__58075594;
+    images : [ExternalBlob__671167343];
+    priceInCents : Nat;
+    sellerId : UserId__158757552;
+    sellerName : ?Text;
+    size : ?Text;
+    status : ListingStatus__271393237;
+    title : Text;
+    updatedAt : Timestamp__301639476
+  };
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type OrderId__197865225 = Nat;
+type OrderStatus__393009242 =
+  {#cancelled; #delivered; #paid; #pending; #shipped};
+type Order__141779993 =
+  {
+    buyerId : UserId__158757552;
+    createdAt : Timestamp__301639476;
+    id : OrderId__197865225;
+    listingId : ListingId__58075594;
+    priceInCents : Nat;
+    sellerId : UserId__158757552;
+    status : OrderStatus__393009242;
+    stripeSessionId : Text;
+    updatedAt : Timestamp__301639476
+  };
+type StripeConfiguration__87721349 =
+  {allowedCountries : [Text]; secretKey : Text};
+type Timestamp__301639476 = Nat;
+type UserId__158757552 = Principal;
+type UserProfile__277265826 =
+  {
+    avatarUrl : ?ExternalBlob__671167343;
+    bio : Text;
+    createdAt : Timestamp__301639476;
+    listingCount : Nat;
+    userId : UserId__158757552;
+    username : Text
+  };
+type UserRole__1073662873 = {#admin; #guest; #user};
+actor {
+  stable accessControlState :
+    {
+      var adminAssigned : Bool;
+      userRoles : Map__605269027<Principal, UserRole__1073662873>
+    };
+  stable listings :
+    {
+      var root : Node__46230540<ListingId__58075594, Listing__798123527>;
+      var size : Nat__490723111
+    };
+  stable nextListingId : {var value : Nat};
+  stable nextOrderId : {var value : Nat};
+  stable orders :
+    {
+      var root : Node__46230540<OrderId__197865225, Order__141779993>;
+      var size : Nat__490723111
+    };
+  stable stripeConfig : {var value : ?StripeConfiguration__87721349};
+  stable userProfiles :
+    {
+      var root : Node__46230540<UserId__158757552, UserProfile__277265826>;
+      var size : Nat__490723111
+    }
+};
